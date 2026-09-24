@@ -5,8 +5,11 @@
 <html>
   <head>
     <title>{{.Title}}</title>
-    <link type="text/css" rel="stylesheet" href="/static/article.css">
     <meta charset='utf-8'>
+    <link type="text/css" rel="stylesheet" href="/static/fonts.css">
+    <link type="text/css" rel="stylesheet" href="/static/base.css">
+    <link type="text/css" rel="stylesheet" href="/static/article.css">
+    {{with .ThemeHref}}<link type="text/css" rel="stylesheet" href="{{.}}">{{end}}
     <script>
       // Initialize Google Analytics tracking code on production site only.
       if (window["location"] && window["location"]["hostname"] == "talks.golang.org") {

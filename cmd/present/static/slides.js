@@ -202,6 +202,7 @@ function updateSlides() {
   enableSlideFrames(curSlide + 2);
 
   updateHash();
+  fitSlide();
 }
 
 function prevSlide() {
@@ -410,6 +411,11 @@ function handleBodyKeyDown(event) {
       if (!inCode) hideHelpText();
       break;
 
+    case 70: // 'F' fills the window with the current slide
+      if (!inCode) toggleFillScreen();
+      event.preventDefault();
+      break;
+
     case 39: // right arrow
     case 13: // Enter
     case 32: // space
@@ -457,6 +463,55 @@ function scaleSmallViewports() {
   el.style.transform = transform;
 }
 
+var FILL_STATE_KEY = 'present.fillScreen';
+var fillScreen = false;
+
+function loadFillState() {
+  try {
+    fillScreen = localStorage.getItem(FILL_STATE_KEY) === '1';
+  } catch (e) {
+    fillScreen = false;
+  }
+}
+
+function toggleFillScreen() {
+  fillScreen = !fillScreen;
+  try {
+    localStorage.setItem(FILL_STATE_KEY, fillScreen ? '1' : '0');
+  } catch (e) {
+    /* ignore storage errors (e.g. private mode) */
+  }
+  fitSlide();
+}
+
+// fitSlide scales the deck either to fill the window (fill mode) or, in the
+// default mode, only down when the viewport is smaller than 1250x750. In fill
+// mode the current card is measured and scaled to the largest size that fits
+// without cropping, preserving its aspect ratio.
+function fitSlide() {
+  var el = document.querySelector('section.slides');
+  if (!el) {
+    return;
+  }
+  if (!fillScreen) {
+    scaleSmallViewports();
+    return;
+  }
+  var article = getSlideEl(curSlide);
+  if (!article) {
+    el.style.transform = '';
+    return;
+  }
+  var w = article.offsetWidth;
+  var h = article.offsetHeight;
+  if (!w || !h) {
+    el.style.transform = '';
+    return;
+  }
+  var scale = Math.min(window.innerWidth / w, window.innerHeight / h);
+  el.style.transform = 'scale(' + scale + ')';
+}
+
 function addEventListeners() {
   document.addEventListener('keydown', handleBodyKeyDown, false);
   var resizeTimeout;
@@ -465,7 +520,7 @@ function addEventListeners() {
     window.clearTimeout(resizeTimeout);
     resizeTimeout = window.setTimeout(function() {
       resizeTimeout = null;
-      scaleSmallViewports();
+      fitSlide();
     }, 50);
   });
 
@@ -475,35 +530,26 @@ function addEventListeners() {
     var el = document.querySelector('section.slides');
     el.style.transform = '';
   };
+  var afterPrint = function() {
+    fitSlide();
+  };
   window.onbeforeprint = beforePrint;
+  window.onafterprint = afterPrint;
   if (window.matchMedia) {
     var mediaQueryList = window.matchMedia('print');
     mediaQueryList.addListener(function(mql) {
-      if (mql.matches) beforePrint();
+      if (mql.matches) {
+        beforePrint();
+      } else {
+        afterPrint();
+      }
     });
   }
 }
 
 /* Initialization */
 
-function addFontStyle() {
-  var el = document.createElement('link');
-  el.rel = 'stylesheet';
-  el.type = 'text/css';
-  el.href =
-    '//fonts.googleapis.com/css?family=' +
-    'Open+Sans:regular,semibold,italic,italicsemibold|Droid+Sans+Mono';
-
-  document.body.appendChild(el);
-}
-
-function addGeneralStyle() {
-  var el = document.createElement('link');
-  el.rel = 'stylesheet';
-  el.type = 'text/css';
-  el.href = PERMANENT_URL_PREFIX + 'styles.css';
-  document.body.appendChild(el);
-
+function addMetaTags() {
   var el = document.createElement('meta');
   el.name = 'viewport';
   el.content = 'width=device-width,height=device-height,initial-scale=1';
@@ -513,8 +559,6 @@ function addGeneralStyle() {
   el.name = 'apple-mobile-web-app-capable';
   el.content = 'yes';
   document.querySelector('head').appendChild(el);
-
-  scaleSmallViewports();
 }
 
 function handleDomLoaded() {
@@ -522,10 +566,10 @@ function handleDomLoaded() {
 
   setupFrames();
 
-  addFontStyle();
-  addGeneralStyle();
+  addMetaTags();
   addEventListeners();
 
+  loadFillState();
   updateSlides();
 
   setupInteraction();

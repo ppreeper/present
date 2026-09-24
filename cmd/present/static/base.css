@@ -1,0 +1,181 @@
+/*
+ * base.css - shared design tokens, reset, and syntax-highlighting palette.
+ *
+ * This file is loaded before the format stylesheet (styles.css for slide
+ * decks, article.css for articles) and before any theme stylesheet. Themes
+ * work by overriding these custom properties; see README.md for the full
+ * token contract.
+ */
+
+:root {
+  /* Fonts ---------------------------------------------------------------- */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Source Serif 4", Georgia, "Times New Roman", Times, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+    "Courier New", monospace;
+
+  /* Slide typography ----------------------------------------------------- */
+  --slide-font-size: 26px;
+  --slide-line-height: 36px;
+  --slide-letter-spacing: -1px;
+  --slide-text-color: #000;
+  --slide-heading-color: #333;
+  --slide-text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+
+  /* Page and card -------------------------------------------------------- */
+  --color-page-bg: radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
+  --color-card-bg: #fff;
+  --color-card-border: rgba(0, 0, 0, 0.3);
+  --card-radius: 10px;
+  --card-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+
+  /* Accent and text ------------------------------------------------------ */
+  --color-accent: #375eab;
+  --color-link: rgb(0, 102, 204);
+  --color-link-visited: rgba(0, 102, 204, 0.75);
+  --color-link-hover: #000;
+  --color-muted: #8c8c8c;
+
+  /* Code surface --------------------------------------------------------- */
+  --code-bg: rgb(240, 240, 240);
+  --code-border: rgb(224, 224, 224);
+  --code-text: #000;
+  --code-font-size: 18px;
+  --code-line-height: 24px;
+  --code-radius: 8px;
+  --table-border-color: rgb(224, 224, 224);
+
+  /* Deck-wide slide background image ------------------------------------- */
+  --slide-background-image: none;
+  --slide-background-size: cover;
+  --slide-background-position: center;
+  --slide-background-repeat: no-repeat;
+
+  /* Syntax highlighting (chroma) ----------------------------------------- */
+  --chroma-comment: #6a737d;
+  --chroma-keyword: #d73a49;
+  --chroma-string: #032f62;
+  --chroma-number: #005cc5;
+  --chroma-function: #6f42c1;
+  --chroma-type: #005cc5;
+  --chroma-operator: #d73a49;
+  --chroma-punctuation: #24292e;
+  --chroma-name: #24292e;
+  --chroma-error: #b31d28;
+  --chroma-inserted: #22863a;
+  --chroma-deleted: #b31d28;
+  --chroma-generic-heading: #005cc5;
+  --chroma-generic-emph: italic;
+  --chroma-generic-strong: bold;
+}
+
+html {
+  box-sizing: border-box;
+}
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+/*
+ * Chroma token classes. The server renders code with chroma and prefixes
+ * every token class with "chroma-". Only the token categories below are
+ * given a colour; anything else inherits the surrounding text colour.
+ */
+.chroma-c,
+.chroma-ch,
+.chroma-cm,
+.chroma-cp,
+.chroma-cpf,
+.chroma-c1,
+.chroma-cs {
+  color: var(--chroma-comment);
+}
+.chroma-k,
+.chroma-kc,
+.chroma-kd,
+.chroma-kn,
+.chroma-kp,
+.chroma-kr,
+.chroma-kt {
+  color: var(--chroma-keyword);
+}
+.chroma-s,
+.chroma-sa,
+.chroma-sb,
+.chroma-sc,
+.chroma-dl,
+.chroma-sd,
+.chroma-s2,
+.chroma-se,
+.chroma-sh,
+.chroma-si,
+.chroma-sx,
+.chroma-sr,
+.chroma-s1,
+.chroma-ss {
+  color: var(--chroma-string);
+}
+.chroma-m,
+.chroma-mb,
+.chroma-mf,
+.chroma-mh,
+.chroma-mi,
+.chroma-il,
+.chroma-mo {
+  color: var(--chroma-number);
+}
+.chroma-nf,
+.chroma-fm {
+  color: var(--chroma-function);
+}
+.chroma-nc,
+.chroma-nn,
+.chroma-ne,
+.chroma-nt {
+  color: var(--chroma-type);
+}
+.chroma-o,
+.chroma-ow,
+.chroma-or {
+  color: var(--chroma-operator);
+}
+.chroma-p {
+  color: var(--chroma-punctuation);
+}
+.chroma-n,
+.chroma-na,
+.chroma-nb,
+.chroma-bp,
+.chroma-no,
+.chroma-nd,
+.chroma-ni,
+.chroma-nl,
+.chroma-nx,
+.chroma-nv,
+.chroma-vc,
+.chroma-vg,
+.chroma-vi,
+.chroma-vm {
+  color: var(--chroma-name);
+}
+.chroma-err {
+  color: var(--chroma-error);
+}
+.chroma-gd {
+  color: var(--chroma-deleted);
+}
+.chroma-gi {
+  color: var(--chroma-inserted);
+}
+.chroma-gh {
+  color: var(--chroma-generic-heading);
+}
+.chroma-ge {
+  font-style: var(--chroma-generic-emph);
+}
+.chroma-gs {
+  font-weight: var(--chroma-generic-strong);
+}

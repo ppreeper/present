@@ -8,28 +8,20 @@
     margin: 0;
     padding: 0;
 
-    display: block !important;
-
     height: 100%;
     height: 100vh;
 
     overflow: hidden;
 
-    background: rgb(215, 215, 215);
-    background: -o-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
-    background: -moz-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
-    background: -webkit-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
-    background: -webkit-gradient(
-      radial,
-      50% 50%,
-      0,
-      50% 50%,
-      500,
-      from(rgb(240, 240, 240)),
-      to(rgb(190, 190, 190))
-    );
+    background: var(--color-page-bg);
 
     -webkit-font-smoothing: antialiased;
+  }
+
+  /* The body starts hidden (see slides.tmpl) and is revealed once slides.js
+     has initialized, so the deck never flashes unstyled content. */
+  body.loaded {
+    display: block !important;
   }
 
   .slides {
@@ -65,14 +57,19 @@
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
 
-    border-radius: 10px;
-    -o-border-radius: 10px;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
+    border-radius: var(--card-radius);
+    -o-border-radius: var(--card-radius);
+    -moz-border-radius: var(--card-radius);
+    -webkit-border-radius: var(--card-radius);
 
-    background-color: white;
+    background-color: var(--color-card-bg);
+    background-image: var(--slide-background-image, none);
+    background-size: var(--slide-background-size, cover);
+    background-position: var(--slide-background-position, center);
+    background-repeat: var(--slide-background-repeat, no-repeat);
 
-    border: 1px solid rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--color-card-border);
+    box-shadow: var(--card-shadow);
 
     transition: transform 0.3s ease-out;
     -o-transition: -o-transform 0.3s ease-out;
@@ -234,6 +231,12 @@
     page-break-after: always;
 
     overflow: hidden;
+
+    /* Drop any deck-wide background image so printed handouts stay ink-friendly. */
+    background-image: none !important;
+    background-color: white !important;
+    color: black !important;
+    box-shadow: none !important;
   }
 
   h2 {
@@ -262,15 +265,15 @@
 /* Styles for slides */
 
 .slides > article {
-  font-family: 'Open Sans', Arial, sans-serif;
+  font-family: var(--font-sans);
 
-  color: black;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  color: var(--slide-text-color);
+  text-shadow: var(--slide-text-shadow);
 
-  font-size: 26px;
-  line-height: 36px;
+  font-size: var(--slide-font-size);
+  line-height: var(--slide-line-height);
 
-  letter-spacing: -1px;
+  letter-spacing: var(--slide-letter-spacing);
 }
 
 b {
@@ -278,14 +281,14 @@ b {
 }
 
 a {
-  color: rgb(0, 102, 204);
+  color: var(--color-link);
   text-decoration: none;
 }
 a:visited {
-  color: rgba(0, 102, 204, 0.75);
+  color: var(--color-link-visited);
 }
 a:hover {
-  color: black;
+  color: var(--color-link-hover);
 }
 
 p {
@@ -312,7 +315,7 @@ h1 {
 
   letter-spacing: -3px;
 
-  color: rgb(51, 51, 51);
+  color: var(--slide-heading-color);
 }
 
 h2 {
@@ -330,7 +333,7 @@ h2 {
 
   letter-spacing: -2px;
 
-  color: rgb(51, 51, 51);
+  color: var(--slide-heading-color);
 }
 
 h3 {
@@ -345,7 +348,7 @@ h3 {
 
   letter-spacing: -1px;
 
-  color: rgb(51, 51, 51);
+  color: var(--slide-heading-color);
 }
 
 ul {
@@ -370,15 +373,16 @@ pre {
   margin-bottom: 20px;
   overflow: hidden;
 
-  background: rgb(240, 240, 240);
-  border: 1px solid rgb(224, 224, 224);
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  border-radius: var(--code-radius);
 
-  font-family: 'Droid Sans Mono', 'Courier New', monospace;
-  font-size: 18px;
-  line-height: 24px;
+  font-family: var(--font-mono);
+  font-size: var(--code-font-size);
+  line-height: var(--code-line-height);
   letter-spacing: -1px;
 
-  color: black;
+  color: var(--code-text);
 }
 
 pre.numbers span:before {
@@ -389,9 +393,9 @@ pre.numbers span:before {
 
 code {
   font-size: 95%;
-  font-family: 'Droid Sans Mono', 'Courier New', monospace;
+  font-family: var(--font-mono);
 
-  color: black;
+  color: var(--code-text);
 }
 
 pre code {
@@ -420,7 +424,7 @@ th {
 }
 td,
 th {
-  border: 1px solid rgb(224, 224, 224);
+  border: 1px solid var(--table-border-color);
   padding: 5px 10px;
   vertical-align: top;
 }
@@ -430,7 +434,7 @@ p.link {
 }
 
 .pagenumber {
-  color: #8c8c8c;
+  color: var(--color-muted);
   font-size: 75%;
   position: absolute;
   bottom: 0px;
@@ -540,7 +544,7 @@ figcaption {
 }
 
 #help {
-  font-family: 'Open Sans', Arial, sans-serif;
+  font-family: var(--font-sans);
   text-align: center;
   color: white;
   background: #000;
@@ -555,4 +559,13 @@ figcaption {
   -o-border-radius: 10px;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slides > article {
+    transition: none;
+    -o-transition: none;
+    -moz-transition: none;
+    -webkit-transition: none;
+  }
 }

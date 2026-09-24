@@ -1,0 +1,44 @@
+/*
+ * mono.css - a grayscale, print-like slide theme.
+ *
+ * Use it from a slide deck with:
+ *
+ *   Theme: mono
+ */
+
+:root {
+  --color-page-bg: radial-gradient(#f4f4f4, #d6d6d6);
+  --color-card-bg: #ffffff;
+  --color-card-border: #b3b3b3;
+  --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+
+  --slide-text-color: #111111;
+  --slide-heading-color: #000000;
+
+  --color-link: #000000;
+  --color-link-visited: #444444;
+  --color-link-hover: #666666;
+  --color-muted: #808080;
+
+  --code-bg: #f5f5f5;
+  --code-border: #cccccc;
+  --code-text: #111111;
+  --table-border-color: #cccccc;
+
+  --chroma-comment: #808080;
+  --chroma-keyword: #000000;
+  --chroma-string: #333333;
+  --chroma-number: #333333;
+  --chroma-function: #000000;
+  --chroma-type: #1a1a1a;
+  --chroma-operator: #444444;
+  --chroma-punctuation: #444444;
+  --chroma-name: #1a1a1a;
+  --chroma-error: #000000;
+  --chroma-inserted: #2b2b2b;
+  --chroma-deleted: #2b2b2b;
+}
+
+a {
+  text-decoration: underline;
+}
