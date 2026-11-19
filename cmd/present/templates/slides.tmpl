@@ -6,6 +6,10 @@
   <head>
     <title>{{.Title}}</title>
     <meta charset='utf-8'>
+    <link type='text/css' rel='stylesheet' href='/static/fonts.css'>
+    <link type='text/css' rel='stylesheet' href='/static/base.css'>
+    <link type='text/css' rel='stylesheet' href='/static/styles.css'>
+    {{with .ThemeHref}}<link type='text/css' rel='stylesheet' href='{{.}}'>{{end}}
     <script>
       var notesEnabled = {{.NotesEnabled}};
     </script>
@@ -40,7 +44,7 @@
 
   <body style='display: none'>
 
-    <section class='slides layout-widescreen'>
+    <section class='slides layout-widescreen'{{with .BackgroundStyle}} style='{{.}}'{{end}}>
 
       <article>
         <h1>{{.Title}}</h1>
@@ -81,7 +85,8 @@
     <div id="help">
       Use the left and right arrow keys or click the left and right
       edges of the page to navigate between slides.<br>
-      (Press 'H' or navigate to hide this message.)
+      Press 'F' to fill the window with the slide (press 'F' again to restore),
+      and 'H' to hide this message.
     </div>
 
     {{if .PlayEnabled}}

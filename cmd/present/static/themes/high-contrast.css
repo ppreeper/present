@@ -1,0 +1,52 @@
+/*
+ * high-contrast.css - a maximal-contrast theme for accessibility.
+ *
+ * Use it from a slide deck with:
+ *
+ *   Theme: high-contrast
+ */
+
+:root {
+  --color-page-bg: #ffffff;
+  --color-card-bg: #ffffff;
+  --color-card-border: #000000;
+  --card-shadow: none;
+
+  --slide-text-color: #000000;
+  --slide-heading-color: #000000;
+  --slide-text-shadow: none;
+
+  --color-link: #0000cc;
+  --color-link-visited: #6a00a8;
+  --color-link-hover: #cc0000;
+  --color-muted: #333333;
+
+  --code-bg: #ffffff;
+  --code-border: #000000;
+  --code-text: #000000;
+  --table-border-color: #000000;
+
+  --chroma-comment: #595959;
+  --chroma-keyword: #b30000;
+  --chroma-string: #005a00;
+  --chroma-number: #004080;
+  --chroma-function: #6a006a;
+  --chroma-type: #004080;
+  --chroma-operator: #8a0000;
+  --chroma-punctuation: #000000;
+  --chroma-name: #000000;
+  --chroma-error: #cc0000;
+  --chroma-inserted: #005a00;
+  --chroma-deleted: #cc0000;
+}
+
+.slides > article,
+td,
+th,
+pre {
+  border-width: 2px;
+}
+
+a {
+  text-decoration: underline;
+}

@@ -1,0 +1,8 @@
+/*
+ * default.css - the built-in default theme.
+ *
+ * The modernised default look lives in base.css and styles.css, so that decks
+ * with no "Theme:" header get it too. This file exists so that
+ * "Theme: default" resolves to a real stylesheet; it intentionally overrides
+ * nothing.
+ */

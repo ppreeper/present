@@ -8,11 +8,15 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"html"
 	"html/template"
 	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/alecthomas/chroma/v2"
+	"github.com/alecthomas/chroma/v2/lexers"
 )
 
 // PlayEnabled specifies whether runnable playground snippets should be
@@ -123,6 +127,12 @@ func parseCode(ctx *Context, sourceFile string, sourceLine int, cmd string) (Ele
 		Numbers: strings.Contains(flags, "-numbers"),
 	}
 
+	// Syntax-highlight non-interactive code blocks. Runnable and editable
+	// blocks stay as plain text so the browser can edit them safely.
+	if !play && !data.Edit {
+		data.Lines = highlightLines(data.Lines, filename)
+	}
+
 	// Include before and after in a hidden span for playground code.
 	if play {
 		data.Prefix = textBytes[:lo]
@@ -175,6 +185,91 @@ func rawCode(lines []codeLine) []byte {
 	return b.Bytes()
 }
 
+// highlightLines syntax-highlights each line of code, using the lexer matched
+// by filename. Unknown file types fall back to plain text. The returned lines
+// carry their highlighted HTML in the HTML field; L is left untouched.
+func highlightLines(lines []codeLine, filename string) []codeLine {
+	if len(lines) == 0 {
+		return lines
+	}
+
+	lexer := lexers.Match(filepath.Base(filename))
+	if lexer == nil {
+		lexer = lexers.Fallback
+	}
+	lexer = chroma.Coalesce(lexer)
+
+	var src strings.Builder
+	for i, l := range lines {
+		if i > 0 {
+			src.WriteByte('\n')
+		}
+		src.WriteString(l.L)
+	}
+
+	tokens, err := chroma.Tokenise(lexer, nil, src.String())
+	if err != nil {
+		return lines
+	}
+
+	split := chroma.SplitTokensIntoLines(tokens)
+	for i := range lines {
+		if i >= len(split) {
+			break
+		}
+		line := split[i]
+		// SplitTokensIntoLines keeps the line's trailing newline on the last
+		// token; the template emits its own newline between line spans.
+		if n := len(line); n > 0 {
+			line[n-1].Value = strings.TrimRight(line[n-1].Value, "\r\n")
+		}
+		h := renderTokens(line)
+		if lines[i].HL {
+			h = template.HTML("<b>" + string(h) + "</b>")
+		}
+		lines[i].HTML = h
+	}
+	return lines
+}
+
+// renderTokens renders chroma tokens as HTML spans carrying "chroma-" class
+// names, HTML-escaping the token text.
+func renderTokens(tokens []chroma.Token) template.HTML {
+	var b strings.Builder
+	for _, t := range tokens {
+		if t.Value == "" {
+			continue
+		}
+		cls := chromaClass(t.Type)
+		if cls == "" {
+			b.WriteString(html.EscapeString(t.Value))
+			continue
+		}
+		b.WriteString(`<span class="`)
+		b.WriteString(cls)
+		b.WriteString(`">`)
+		b.WriteString(html.EscapeString(t.Value))
+		b.WriteString(`</span>`)
+	}
+	return template.HTML(b.String())
+}
+
+// chromaClass returns the prefixed CSS class for a token type, walking up to
+// the nearest parent type that has one. It mirrors the class naming used by
+// chroma's own HTML formatter.
+func chromaClass(t chroma.TokenType) string {
+	for t != 0 {
+		if cls, ok := chroma.StandardTypes[t]; ok {
+			if cls == "" {
+				return ""
+			}
+			return "chroma-" + cls
+		}
+		t = t.Parent()
+	}
+	return ""
+}
+
 type codeTemplateData struct {
 	Lines          []codeLine
 	Prefix, Suffix []byte
@@ -193,7 +288,8 @@ const codeTemplateHTML = `
 
 <pre{{if .Edit}} contenteditable="true" spellcheck="false"{{end}}{{if .Numbers}} class="numbers"{{end}}>{{/*
 	*/}}{{range .Lines}}<span num="{{.N}}">{{/*
-	*/}}{{if .HL}}{{leadingSpace .L}}<b>{{trimSpace .L}}</b>{{/*
+	*/}}{{if .HTML}}{{.HTML}}{{/*
+	*/}}{{else if .HL}}<b>{{.L}}</b>{{/*
 	*/}}{{else}}{{.L}}{{end}}{{/*
 */}}</span>
 {{end}}</pre>
@@ -202,9 +298,10 @@ const codeTemplateHTML = `
 
 // codeLine represents a line of code extracted from a source file.
 type codeLine struct {
-	L  string // The line of code.
-	N  int    // The line number from the source file.
-	HL bool   // Whether the line should be highlighted.
+	L    string        // The line of code, as plain text.
+	N    int           // The line number from the source file.
+	HL   bool          // Whether the line should be highlighted.
+	HTML template.HTML // Syntax-highlighted HTML for the line, if any.
 }
 
 // codeLines takes a source file and returns the lines that

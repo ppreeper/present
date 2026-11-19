@@ -1,0 +1,41 @@
+/*
+ * dark.css - a dark slide theme.
+ *
+ * Use it from a slide deck with:
+ *
+ *   Theme: dark
+ */
+
+:root {
+  --color-page-bg: radial-gradient(#2a2a2e, #141417);
+  --color-card-bg: #1e1e22;
+  --color-card-border: #3a3a41;
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+
+  --slide-text-color: #e8e8ea;
+  --slide-heading-color: #ffffff;
+  --slide-text-shadow: none;
+
+  --color-link: #7db3ff;
+  --color-link-visited: rgba(125, 179, 255, 0.75);
+  --color-link-hover: #ffffff;
+  --color-muted: #9a9aa2;
+
+  --code-bg: #26262b;
+  --code-border: #3a3a41;
+  --code-text: #e8e8ea;
+  --table-border-color: #3a3a41;
+
+  --chroma-comment: #7f848e;
+  --chroma-keyword: #c678dd;
+  --chroma-string: #98c379;
+  --chroma-number: #d19a66;
+  --chroma-function: #61afef;
+  --chroma-type: #e5c07b;
+  --chroma-operator: #56b6c2;
+  --chroma-punctuation: #abb2bf;
+  --chroma-name: #e6e6e6;
+  --chroma-error: #e06c75;
+  --chroma-inserted: #98c379;
+  --chroma-deleted: #e06c75;
+}

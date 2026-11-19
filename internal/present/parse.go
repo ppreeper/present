@@ -81,6 +81,16 @@ type Doc struct {
 	Sections   []Section
 	Tags       []string
 	OldURL     []string
+
+	// Theme is the raw value of the optional "Theme:" header line.
+	Theme string
+	// ThemeHref is the stylesheet URL the Theme header resolved to.
+	ThemeHref string
+	// Background is the raw value of the optional "Background:" header line.
+	Background string
+	// BackgroundStyle is the CSS declaration that sets the deck-wide slide
+	// background image, derived from the Background header.
+	BackgroundStyle template.CSS
 }
 
 // Author represents the person who wrote and/or is presenting the document.
@@ -327,6 +337,24 @@ func (ctx *Context) Parse(r io.Reader, name string, mode ParseMode) (*Doc, error
 	}
 	if mode&TitlesOnly != 0 {
 		return doc, nil
+	}
+
+	// Resolve the optional Theme and Background headers once, so that broken
+	// values are reported as parse errors. TitlesOnly skips this so that
+	// scanning a directory never fails because of an unrelated document.
+	if doc.Theme != "" {
+		href, err := resolveTheme(doc.Theme, name)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %v", name, err)
+		}
+		doc.ThemeHref = href
+	}
+	if doc.Background != "" {
+		style, err := resolveBackground(doc.Background, name)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %v", name, err)
+		}
+		doc.BackgroundStyle = style
 	}
 
 	// Authors
@@ -589,6 +617,18 @@ func parseHeader(doc *Doc, isMarkdown bool, lines *Lines) error {
 			doc.Summary = strings.TrimSpace(text[len("Summary:"):])
 		} else if strings.HasPrefix(text, "OldURL:") {
 			doc.OldURL = append(doc.OldURL, strings.TrimSpace(text[len("OldURL:"):]))
+		} else if strings.HasPrefix(text, "Theme:") {
+			v := strings.TrimSpace(text[len("Theme:"):])
+			if v == "" {
+				return errors.New("empty Theme header; expected a theme name or stylesheet path")
+			}
+			doc.Theme = v
+		} else if strings.HasPrefix(text, "Background:") {
+			v := strings.TrimSpace(text[len("Background:"):])
+			if v == "" {
+				return errors.New("empty Background header; expected an image path or URL")
+			}
+			doc.Background = v
 		} else if t, ok := parseTime(text); ok {
 			doc.Time = t
 		} else if doc.Subtitle == "" {

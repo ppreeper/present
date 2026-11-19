@@ -25,6 +25,7 @@ var (
 	basePath      = flag.String("base", "", "base path for slide template and static resources")
 	contentPath   = flag.String("content", ".", "base path for presentation content")
 	usePlayground = flag.Bool("use_playground", false, "run code snippets using play.golang.org; if false, run them locally and deliver results by WebSocket transport")
+	howto         = flag.Bool("howto", false, "print a guide to the file format, themes, fonts, and elements, then exit")
 )
 
 //go:embed static templates
@@ -34,6 +35,11 @@ func main() {
 	flag.BoolVar(&present.PlayEnabled, "play", true, "enable playground (permit execution of arbitrary user code)")
 	flag.BoolVar(&present.NotesEnabled, "notes", false, "enable presenter notes (press 'N' from the browser to display them)")
 	flag.Parse()
+
+	if *howto {
+		fmt.Print(howtoText)
+		return
+	}
 
 	if os.Getenv("GAE_ENV") == "standard" {
 		log.Print("Configuring for App Engine Standard")

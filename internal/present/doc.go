@@ -18,6 +18,8 @@ and other metadata, which looks like:
 	Tags: foo, bar, baz
 	Summary: This is a great document you want to read.
 	OldURL: former-path-for-this-doc
+	Theme: dark
+	Background: images/cover.jpg
 
 The "# " prefix before the title indicates that this is
 a Markdown-enabled present file: it uses
@@ -40,8 +42,22 @@ The old URL line, which may be repeated, gives an older (perhaps relative) URL
 for this document.
 A server might use these to generate appropriate redirects.
 
+The theme line selects the stylesheet used to render the document.
+Its value is either the name of a bundled theme (default, dark, mono, or
+high-contrast; names are matched case-insensitively) or a path to a custom CSS
+file. A path is resolved relative to the directory containing the present file
+and must exist. A leading "/" or a full URL is used verbatim without checking
+that the file exists.
+
+The background line, which applies to slides only, sets an image displayed
+behind the contents of every slide. Like the theme line, its value may be a
+path (resolved relative to the present file and required to exist) or a
+rooted/absolute URL used verbatim. An individual slide can override the
+deck-wide background with a ".background" command.
+
 Only the title is required;
-the subtitle, date, tags, summary, and old URL lines are optional.
+the subtitle, date, tags, summary, old URL, theme, and background lines are
+optional.
 In Markdown-enabled present, the summary defaults to being empty.
 In legacy present, the summary defaults to the first paragraph of text.
 
